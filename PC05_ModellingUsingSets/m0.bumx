@@ -1,0 +1,60 @@
+machine m0
+sees c0
+variables
+	students
+	staff
+	loggedIn
+invariants
+	@typeof-students: students ⊆ USER
+	@typeof-staff: staff ⊆ USER
+	@staff-are-not-students: staff ∩ students = ∅
+	@typeof-loggedIn: loggedIn ⊆ students ∪ staff
+events
+	event INITIALISATION
+	then
+		@init-students: students ≔ ∅
+		@init-staff: staff ≔ ∅
+		@init-loggedIn: loggedIn ≔ ∅
+	end
+
+	event RegisterStudent
+	any
+		s
+	where
+		@is-user: s ∈ USER
+		@is-not-registered: s ∉ students ∪ staff
+	then
+		@add-user: students ≔ students ∪ {s}
+	end
+
+	event LogIn
+	any
+		u
+	where
+		@is-registered: u ∈ students ∪ staff
+		@is-not-logged-in: u ∉ loggedIn
+	then
+		@log-in: loggedIn ≔ loggedIn ∪ {u}
+	end
+
+	event LogOut
+	any
+		u
+	where
+		@is-logged-in: u ∈ loggedIn
+	then
+		@log-out: loggedIn ≔ loggedIn ∖ {u}
+	end
+
+	event PromoteStudentToStaff
+	any
+		s
+	where
+		@is-logged-in: s ∈ students
+		@is-not-logged-in: s ∉ loggedIn
+	then
+		@remove-from-students: students ≔ students ∖ {s}
+		@add-to-staff: staff ≔ staff ∪ {s}
+	end
+
+end
