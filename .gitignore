@@ -1,0 +1,10 @@
+.project
+
+# event-b compiled files
+*.bcm
+*.bpo
+*.bpr
+*.buc
+*.bum
+*.bcc
+*.bps
