@@ -1,0 +1,71 @@
+machine m0
+sees c0
+variables
+  students
+  courses
+  enrolments
+invariants
+  @typeof-students: students ⊆ STUDENT
+  @typeof-courses: courses ⊆ COURSE
+  @typeof-enrolments: enrolments ∈ students ↔ courses
+events
+	event INITIALISATION
+	then
+	  @init-students: students ≔ ∅
+	  @init-courses: courses ≔ ∅
+	  @init-enrolments: enrolments ≔ ∅
+	end
+	
+	event EnrolStudent
+	any
+	  s
+	where
+	  @typeof-student: s ∈ STUDENT
+	  @not-already-enrolled: s ∉ students
+	then
+	  @add-student: students ≔ students ∪ {s}
+	end
+	
+	event UnenrolStudent
+	any
+	  s
+	where
+	  @is-enrolled: s ∈ students
+	then
+	  @remove-student: students ≔ students ∖ {s}
+	  @remove-enrolments: enrolments ≔ {s} ⩤ enrolments
+	end
+	
+	event AddCourse
+	any
+	  c
+	where
+	  @typeof-course: c ∈ COURSE
+	  @not-already-added: c ∉ courses
+	then
+	  @add-course: courses ≔ courses ∪ {c}
+	end
+	
+	event RemoveCourse
+	any
+	  c
+	where
+	  @is-course: c ∈ courses
+	then
+	  @remove-course: courses ≔ courses ∖ {c}
+	  @remove-enrolments: enrolments ≔ enrolments ⩥ {c}
+	end
+	
+	event RegisterStudentOnCourse
+	any
+	  s
+	  c
+	where
+	  @is-student: s ∈ students
+	  @is-course: c ∈ courses
+	  @is-not-on-course: s ↦ c ∉ enrolments
+	then
+	  @register: enrolments ≔ enrolments ∪ {s ↦ c}
+	end
+
+end
