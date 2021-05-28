@@ -1,0 +1,36 @@
+machine m0
+sees c0
+variables
+  allocations
+invariants
+  @typeof-allocations: allocations ∈ ROOM ⤔ GUEST
+events
+
+	event INITIALISATION
+	then
+	  @init-allocations: allocations ≔ ∅
+	end
+
+    event CheckIn
+    any
+      g
+      r
+    where
+      @is-guest: g ∈ GUEST
+      @is-room: r ∈ ROOM
+      @guest-is-not-checked-in: g ∉ ran(allocations)
+      @room-is-free: r ∉ dom(allocations)
+    then
+      @allocate-room: allocations(r) ≔ g
+    end
+    
+    event CheckOut
+    any
+      g
+    where
+      @guest-is-checked-in: g ∈ ran(allocations)
+    then
+      @allocate-room: allocations ≔ allocations ⩥ {g}
+    end
+
+end

@@ -1,0 +1,44 @@
+machine m1
+refines m0
+sees c0
+variables
+  allocations
+  rooms
+invariants
+  @typeof-rooms: rooms ⊆ ROOM
+  @typeof-allocations: allocations ∈ rooms ⤔ GUEST
+events
+	event INITIALISATION extends INITIALISATION
+	then
+	  @init-rooms: rooms ≔ ∅
+	end
+
+	event CheckIn extends CheckIn
+	where 
+	  @is-registered-room: r ∈ rooms
+	end
+
+	event CheckOut extends CheckOut
+	end
+	
+	event AddRoom
+	any
+	  r
+	where
+	  @is-room: r ∈ ROOM
+	  @is-not-registered: r ∉ rooms
+	then
+	  @add-room: rooms ≔ rooms ∪ {r}
+	end
+	
+	event RemoveRoom
+	any
+	  r
+	where
+	  @is-registered-room: r ∈ rooms
+	  @is-not-occupied: r ∉ dom(allocations)
+	then
+	  @remove-room: rooms ≔ rooms ∖ {r}
+	end
+
+end
